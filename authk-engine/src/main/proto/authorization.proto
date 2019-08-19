@@ -1,0 +1,24 @@
+syntax = "proto3";
+package br.com.authk.rpc.authorization;
+
+option java_package = "br.com.authk.rpc.authorization";
+option java_generic_services = true;
+option java_multiple_files = true;
+
+message AuthorizationRequest {
+    string cardBin = 1;
+    string cardNumber =2;
+    double transactionAmmount = 3;
+}
+
+message AuthorizationResponse {
+    string responseCode = 1;
+}
+
+message Empty {
+}
+
+service Authorization {
+    rpc authorize (stream AuthorizationRequest) returns (Empty);
+    rpc response (stream AuthorizationResponse) returns (Empty);
+}
