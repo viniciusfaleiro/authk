@@ -23,31 +23,30 @@ class AuthorizationRequestOutboundMessageProcessor: EventHandler<ContextEvent> {
     override fun onEvent(event: ContextEvent?, sequence: Long, wtv: Boolean) {
         tpsLogger.event()
 
-        var req = event?.context?.get(ContextKey.OPERATION_REQUEST_ID.toString()) as InternalAuthorizationRequest
+        var ctx = event?.context
+
+        var req = ctx?.get(ContextKey.OPERATION_REQUEST_ID.toString()) as InternalAuthorizationRequest
         var destinationHost : String?
 
         if(req != null){
-            destinationHost = routingMap[req.getCardNumber()]
+            destinationHost = ctx.get(ContextKey.DESTINATION_HOST.toString()) as String
 
-            if(destinationHost == null){
-                destinationHost = Configuration.instance().grpcDefaultOutboundHost()
-            }
-
-            if(!stubMap.containsKey(destinationHost)){
-                val mngChannel = ManagedChannelBuilder.forAddress(Configuration.instance().grpcDefaultOutboundHost(), Configuration.instance().grpcDefaultOutboundPort())
-                    .usePlaintext()
-                    .build()
-
-                if(!stubMap.containsKey(destinationHost)){
-                    stubMap[destinationHost] = AuthorizationGrpc.newStub(mngChannel)
-                }
-            }
+            lazyInitChannelFor(destinationHost)
 
             val authService = stubMap[destinationHost]
+            //authService?.authorize(AuthResponseStreamObserver())?.onNext(req.asAuthorizationRequest())
+        }
+    }
 
-            val authRequest = (event!!.context!!.get(ContextKey.OPERATION_REQUEST_ID.toString()) as InternalAuthorizationRequest).asAuthorizationRequest()
+    private fun lazyInitChannelFor(destinationHost: String) {
+        if (!stubMap.containsKey(destinationHost)) {
+            val mngChannel = ManagedChannelBuilder.forAddress(
+                Configuration.instance().grpcDefaultOutboundHost(),
+                Configuration.instance().grpcDefaultOutboundPort()
+            ).usePlaintext().build()
 
-            authService?.authorize(AuthResponseStreamObserver())?.onNext(authRequest)
+            stubMap[destinationHost] = AuthorizationGrpc.newStub(mngChannel)
+
         }
     }
 

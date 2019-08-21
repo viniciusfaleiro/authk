@@ -1,4 +1,4 @@
 package br.com.authk.data
 
-class StateKeySet(host : AffinityHost,
-                  keys : Set<String>)
+class StateKeySet(var hosts : AffinityHost,
+                  var keys : Set<String>)

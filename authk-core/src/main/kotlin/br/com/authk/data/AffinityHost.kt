@@ -1,3 +1,3 @@
 package br.com.authk.data
 
-class AffinityHost (ip : String)
+class AffinityHost (var ip : String)

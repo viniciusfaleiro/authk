@@ -1,5 +1,6 @@
 package br.com.authk.data
 
 enum class ContextKey {
-    OPERATION_REQUEST_ID
+    OPERATION_REQUEST_ID,
+    DESTINATION_HOST
 }

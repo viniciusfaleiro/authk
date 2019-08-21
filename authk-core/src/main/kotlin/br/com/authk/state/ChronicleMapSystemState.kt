@@ -5,12 +5,23 @@ import net.openhft.chronicle.map.ChronicleMap
 import net.openhft.chronicle.map.ChronicleMapBuilder
 import java.io.File
 
-class ChronicleMapSystemState : State {
+class ChronicleMapSystemState private constructor(): State {
     private val avgSize : Double = 256.0
     private val entries : Long = 1_000_000
-
     private val mapName = "c:/tmp/system_state.dat"
-    private val state : MutableMap<String, String> = loadMap()
+    private val state : MutableMap<String, String>
+
+    init {
+        state = loadMap()
+    }
+
+    companion object{
+        private val instance = ChronicleMapSystemState()
+
+        fun instance() : ChronicleMapSystemState{
+            return instance;
+        }
+    }
 
     override fun get(key: String): Any? {
         return state[key]

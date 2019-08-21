@@ -1,6 +1,7 @@
 package br.com.authk.factory.auth
 
-import br.com.authk.command.ConvertISOAuthorizationRequestMessage
+import br.com.authk.command.ConvertISOAuthorizationRequestCommand
+import br.com.authk.command.OutgoingRoutingRuleCommand
 import br.com.authk.data.ContextEvent
 import br.com.authk.factory.EventHandlerFactory
 import br.com.authk.factory.RingID
@@ -14,7 +15,9 @@ class GatewayEventHandlerFactory: EventHandlerFactory {
         val handlers = ArrayList<EventHandler<ContextEvent>>()
 
         handlers.add(CommandChainProcessor()
-            .addCommand(ConvertISOAuthorizationRequestMessage()))
+            .addCommand(ConvertISOAuthorizationRequestCommand()) // Open ISO message
+            .addCommand(OutgoingRoutingRuleCommand()) // Define Request Routing
+        )
 
         return handlers
     }

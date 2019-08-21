@@ -4,6 +4,7 @@ import br.com.authk.factory.LocalQueueFactory
 import br.com.authk.factory.RingBufferFactory
 import br.com.authk.factory.AuthLocalQueueFactory
 import br.com.authk.factory.AuthRingBufferFactory
+import java.time.Duration
 
 class AuthConfiguration : Configuration() {
     override fun grpcServerPort(): Int {
@@ -31,6 +32,18 @@ class AuthConfiguration : Configuration() {
     }
 
     override fun keyAdviseFrequency(): Long {
-        return 1_000 * 30
+        return 1_000 * 30 // 30 seconds
+    }
+
+    override fun getAdministrationBrokerList(): String {
+        return "localhost:9092"
+    }
+
+    override fun getAdministrationConsumerPoolDuration(): Duration {
+        return Duration.ofSeconds(1L)
+    }
+
+    override fun getAdministrationTopic(): String {
+        return "authorization_admin_topic"
     }
 }

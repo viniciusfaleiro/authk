@@ -2,6 +2,7 @@ package br.com.authk.config
 
 import br.com.authk.factory.LocalQueueFactory
 import br.com.authk.factory.RingBufferFactory
+import java.time.Duration
 
 abstract class Configuration {
     companion object{
@@ -23,4 +24,8 @@ abstract class Configuration {
     abstract fun grpcServerPort() : Int
     abstract fun adviseKeySet(): Boolean
     abstract fun keyAdviseFrequency() : Long
+    abstract fun getAdministrationBrokerList() : String
+    abstract fun getAdministrationTopic() : String
+    abstract fun getAdministrationConsumerPoolDuration() : Duration
+
 }

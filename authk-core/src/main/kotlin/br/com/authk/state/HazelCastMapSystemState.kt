@@ -7,7 +7,7 @@ import com.hazelcast.core.HazelcastInstance
 import com.hazelcast.core.IMap
 import java.util.*
 
-class HazelCastMapSystemState private constructor(): State{
+public class HazelCastMapSystemState private constructor(): State{
     private var state : IMap<String, String>
     private val mapName = "state"
     private var hazelcastInstance : HazelcastInstance

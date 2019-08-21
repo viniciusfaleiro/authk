@@ -4,17 +4,21 @@ import br.com.authk.context.Context
 import br.com.authk.data.InternalAuthorizationRequest
 import br.com.authk.data.ContextKey
 import br.com.authk.data.Message
+import org.jpos.iso.IFE_NUMERIC
 import org.jpos.iso.ISOMsg
 import org.jpos.iso.packager.GenericPackager
 import java.nio.charset.StandardCharsets
 
-class ConvertISOAuthorizationRequestMessage : Command {
-    private val isoPackager = GenericPackager("c:/tmp/isomap.xml")
+/**
+ * Convert ISO 8583 into internal format
+ */
+class ConvertISOAuthorizationRequestCommand : Command {
+    private val isoPackager = GenericPackager("c:/tmp/isomap_bin.xml")
     private val expectedMessageType = "0110"
 
     override fun isApplicableFor(ctx: Context): Boolean {
         val msg = ctx.get(Context.MESSAGE_ID_KEY.toString()) as Message
-        return expectedMessageType == msg.messageType
+        return msg != null && expectedMessageType == msg.messageType
     }
 
     override fun execute(ctx: Context) : Boolean {
@@ -23,6 +27,7 @@ class ConvertISOAuthorizationRequestMessage : Command {
         if(msg.rawMessage != null) {
             val isoMsg = ISOMsg()
             isoMsg.packager = isoPackager
+
 
             isoMsg.unpack(msg.rawMessage!!.toByteArray(StandardCharsets.UTF_8))
 
