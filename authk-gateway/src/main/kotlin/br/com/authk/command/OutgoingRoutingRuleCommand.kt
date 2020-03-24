@@ -16,7 +16,7 @@ class OutgoingRoutingRuleCommand : Command{
     override fun execute(ctx: Context): Boolean {
         val req = ctx.get(ContextKey.OPERATION_REQUEST_ID.toString()) as InternalAuthorizationRequest
 
-        var destinationHost = localState.get(CacheKeyPrefix.CREDIT_CARD_NUMBER_.composeKey(req.getCardNumber()))
+        var destinationHost = localState.get(CacheKeyPrefix.CREDIT_CARD_NUMBER_.composeKey(req.getAccountNumber()))
 
         if(destinationHost == null){
             destinationHost = Configuration.instance().grpcDefaultOutboundHost()
@@ -28,7 +28,7 @@ class OutgoingRoutingRuleCommand : Command{
     }
 
     override fun isApplicableFor(ctx: Context): Boolean {
-        val req = ctx.get(ContextKey.OPERATION_REQUEST_ID.toString()) as InternalAuthorizationRequest
-        return req != null
+        val req = ctx.get(ContextKey.OPERATION_REQUEST_ID.toString()) as InternalAuthorizationRequest?
+        return req != null && req.getAccountNumber() != null
     }
 }

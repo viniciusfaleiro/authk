@@ -17,7 +17,6 @@ import java.lang.RuntimeException
 
 class AuthorizationRequestOutboundMessageProcessor: EventHandler<ContextEvent> {
     private val tpsLogger = TPSLogger(this.javaClass.canonicalName)
-    private val routingMap : Map<String, String> = mutableMapOf()
     private val stubMap : MutableMap<String, AuthorizationGrpc.AuthorizationStub> = mutableMapOf()
 
     override fun onEvent(event: ContextEvent?, sequence: Long, wtv: Boolean) {
@@ -34,7 +33,7 @@ class AuthorizationRequestOutboundMessageProcessor: EventHandler<ContextEvent> {
             lazyInitChannelFor(destinationHost)
 
             val authService = stubMap[destinationHost]
-            //authService?.authorize(AuthResponseStreamObserver())?.onNext(req.asAuthorizationRequest())
+            authService?.authorize(AuthResponseStreamObserver())?.onNext(req.asAuthorizationRequest())
         }
     }
 

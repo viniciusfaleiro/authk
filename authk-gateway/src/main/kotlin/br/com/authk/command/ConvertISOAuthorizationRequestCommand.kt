@@ -4,7 +4,7 @@ import br.com.authk.context.Context
 import br.com.authk.data.InternalAuthorizationRequest
 import br.com.authk.data.ContextKey
 import br.com.authk.data.Message
-import org.jpos.iso.IFE_NUMERIC
+import br.com.authk.data.MessageType
 import org.jpos.iso.ISOMsg
 import org.jpos.iso.packager.GenericPackager
 import java.nio.charset.StandardCharsets
@@ -14,11 +14,10 @@ import java.nio.charset.StandardCharsets
  */
 class ConvertISOAuthorizationRequestCommand : Command {
     private val isoPackager = GenericPackager("c:/tmp/isomap_bin.xml")
-    private val expectedMessageType = "0110"
 
     override fun isApplicableFor(ctx: Context): Boolean {
         val msg = ctx.get(Context.MESSAGE_ID_KEY.toString()) as Message
-        return msg != null && expectedMessageType == msg.messageType
+        return msg != null && MessageType.AUTHORIZATION_REQ.value == msg.messageType
     }
 
     override fun execute(ctx: Context) : Boolean {
@@ -28,10 +27,10 @@ class ConvertISOAuthorizationRequestCommand : Command {
             val isoMsg = ISOMsg()
             isoMsg.packager = isoPackager
 
-
             isoMsg.unpack(msg.rawMessage!!.toByteArray(StandardCharsets.UTF_8))
+            isoMsg.dump(System.out, " ")
 
-            ctx.save(ContextKey.OPERATION_REQUEST_ID.toString(), InternalAuthorizationRequest(isoMsg))
+            ctx.save(ContextKey.OPERATION_REQUEST_ID.toString(), InternalAuthorizationRequest(msg.uniqueId.toString(), isoMsg))
         }else{
             //TODO: return parsing rejection
             return true;

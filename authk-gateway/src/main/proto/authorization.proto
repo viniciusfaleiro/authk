@@ -6,10 +6,21 @@ option java_generic_services = true;
 option java_multiple_files = true;
 
 message AuthorizationRequest {
-    string cardBin = 1;
-    string cardNumber =2;
-    double transactionAmmount = 3;
+    string requestId = 1;
+    string accountNumber = 2;               /* Field 2 */
+    string processingCode = 3;              /* Field 3 */
+    double transactionAmount = 4;           /* Field 4 */
+    string dateTime = 5;                    /* Field 7 */
+    string systemTraceAuditNumber = 6;      /* Field 11 */
+    string acquiringId = 7;                 /* Field 32 */
+    string merchantId = 8;                  /* Field 42 */
 }
+
+ /* string localTransactionTime = 6;           Field 12
+    string localTransactionDate = 7;           Field 13
+    string expirationDate = 8;                 Field 14
+    string merchantType = 9;                   Field 18
+    string entryMode = 10;                     Field 22 */
 
 message AuthorizationResponse {
     string responseCode = 1;

@@ -3,6 +3,7 @@ package br.com.authk.listener
 import br.com.authk.config.Configuration
 import br.com.authk.ring.RingPublisher
 import br.com.authk.rpc.authorization.AuthorizationGrpc
+import br.com.authk.rpc.authorization.AuthorizationRequest
 import br.com.authk.rpc.authorization.AuthorizationResponse
 import br.com.authk.rpc.authorization.Empty
 import br.com.authk.sequence.StatefullSequencer
@@ -24,12 +25,12 @@ class AuthGRPCMessageListener : Listener {
     }
 
     class AuthorizationService : AuthorizationGrpc.AuthorizationImplBase() {
-        override fun response(responseObserver: StreamObserver<Empty>?): StreamObserver<AuthorizationResponse> {
+        override fun authorize(responseObserver: StreamObserver<Empty>?): StreamObserver<AuthorizationRequest> {
             return AuthorizationResponseStreamObserver()
         }
     }
 
-    class AuthorizationResponseStreamObserver (): StreamObserver<AuthorizationResponse> {
+    class AuthorizationResponseStreamObserver (): StreamObserver<AuthorizationRequest> {
         private val publisher: RingPublisher = RingPublisher()
         private val sequencer = StatefullSequencer()
         private val tpsLogger = TPSLogger(this.javaClass.canonicalName)
@@ -42,8 +43,8 @@ class AuthGRPCMessageListener : Listener {
         override fun onCompleted() {
         }
 
-        override fun onNext(authResp: AuthorizationResponse?) {
-            println("response:" + authResp!!.responseCode)
+        override fun onNext(authReq: AuthorizationRequest) {
+            println("Req Auth:" + authReq.requestId + " Cartão:" + authReq.accountNumber + " Valor:" + authReq.transactionAmount + " Data:" + authReq.dateTime)
         }
     }
 }
